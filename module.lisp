@@ -16,8 +16,6 @@
   )
 
 (define-delete-hook (module)
-  (when (interface-p module)
-    (unlock-package module))
   (loop for interface in (module-storage module :implements)
         do (setf (implementation interface) NIL)
            (reset-interface interface)))

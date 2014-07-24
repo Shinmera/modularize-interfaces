@@ -22,18 +22,6 @@
     `(when (or *redefine* (not (find-method #',name ',qualifiers (mapcar #'find-class ',lambda-list))))
        (defmethod ,name ,@args))))
 
-(defun lock-package (package)
-  #+sbcl (sb-ext:lock-package package)
-  package)
-
-(defun unlock-package (package)
-  #+sbcl (sb-ext:unlock-package package)
-  package)
-
-(defmacro with-unlocked-package ((package) &body body)
-  #+sbcl `(sb-ext:with-unlocked-packages (,package) ,@body)
-  #-sbcl `(progn ,@body))
-
 (defun make-keyword (name)
   (let ((name (string name)))
     (or (find-symbol name "KEYWORD")

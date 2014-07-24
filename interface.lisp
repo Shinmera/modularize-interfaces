@@ -59,28 +59,21 @@
 (defun reset-interface (interface)
   (let ((interface (interface interface)))
     (warn "Resetting interface ~s" interface)
-    (with-unlocked-package (interface)
-      (funcall (module-storage interface 'interface-reset)))))
+    (funcall (module-storage interface 'interface-reset))))
 
 (defmacro define-interface (name &body components)
   (let ((fqid (format NIL "MODULARIZE.INT.~a" name))
         (interface (gensym "INTERFACE")))
-    (let ((def `(progn
-                  (define-module ,name
-                    (:nicknames ,(make-symbol fqid))
-                    (:export #:*IMPLEMENTATION* #:IMPLEMENTATION)
-                    (:export ,@(loop for (type name &rest rest) in components
-                                     collect (make-symbol (string name)))))
-                  (let ((,interface (find-package ,(string name))))
-                    (funcall
-                     (setf (module-storage ,interface 'interface-reset)
-                           #'(lambda ()
-                               (expand-interface ,(string name)
-                                 ,@components))))
-                    ,interface))))
-      `(eval-when (:compile-toplevel :load-toplevel :execute)
-         ,@(if (interface-p fqid)
-               `((with-unlocked-package (,(find-package fqid))
-                   ,def))
-               `((lock-package
-                  ,def)))))))
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
+       (define-module ,name
+         (:nicknames ,(make-symbol fqid))
+         (:export #:*IMPLEMENTATION* #:IMPLEMENTATION)
+         (:export ,@(loop for (type name &rest rest) in components
+                          collect (make-symbol (string name)))))
+       (let ((,interface (find-package ,(string name))))
+         (funcall
+          (setf (module-storage ,interface 'interface-reset)
+                #'(lambda ()
+                    (expand-interface ,(string name)
+                      ,@components))))
+         ,interface))))
