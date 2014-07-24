@@ -77,3 +77,25 @@
                     (expand-interface ,(string name)
                       ,@components))))
          ,interface))))
+
+(defmacro defimpl (name &rest args)
+  (unless (eql (implementation (symbol-package name)) *package*)
+    (error "~s is not implementation of ~s." *package* (symbol-package name)))
+  (cond
+    ((macro-function name)
+     `(defmacro ,name ,@args))
+    ((fboundp name)
+     (etypecase (symbol-function name)
+       (generic-function
+        `(defmethod ,name ,@args))
+       (function
+        `(defun ,name ,@args))))))
+
+(defmacro define-interface-function (name args &body body)
+  `(defimpl ,name ,args ,@body))
+
+(defmacro define-interface-macro (name args &body body)
+  `(defimpl ,name ,args ,@body))
+
+(defmacro define-interface-method (name &rest args)
+  `(defimpl ,name ,@args))
