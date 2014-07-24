@@ -78,6 +78,9 @@
                       ,@components))))
          ,interface))))
 
+(defmacro define-interface-extension (name &body components)
+  )
+
 (defmacro defimpl (name &rest args)
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
