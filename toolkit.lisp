@@ -24,15 +24,15 @@
 
 (defun lock-package (package)
   #+sbcl (sb-ext:lock-package package)
-  #-sbcl (error "Your CL implementation is not supported!!"))
+  package)
 
 (defun unlock-package (package)
   #+sbcl (sb-ext:unlock-package package)
-  #-sbcl (error "Your CL implementation is not supported!!"))
+  package)
 
 (defmacro with-unlocked-package ((package) &body body)
   #+sbcl `(sb-ext:with-unlocked-packages (,package) ,@body)
-  #-sbcl (error "Your CL implementation is not supported!!"))
+  #-sbcl `(progn ,@body))
 
 (defun make-keyword (name)
   (let ((name (string name)))
