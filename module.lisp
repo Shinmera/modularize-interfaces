@@ -16,6 +16,13 @@
   )
 
 (define-delete-hook (module)
+  (when (interface-p module)
+    (setf (module-storage (implementation module) :implements)
+          (delete module (implementation module))))
   (loop for interface in (module-storage module :implements)
-        do (setf (implementation interface) NIL)
-           (reset-interface interface)))
+        do (setf (implementation interface) NIL)))
+
+(defmethod asdf:operate :after ((op asdf:load-op) (module module) &key)
+  (let ((module (module (virtual-module-name module))))
+    (loop for interface in (module-storage module :implements)
+          do (test-interface interface))))

@@ -39,27 +39,49 @@
 
 (defun (setf implementation) (implementation interface)
   (with-simple-restart (abort "Abort the implementation set.")
-    (setf (symbol-value (find-symbol "*IMPLEMENTATION*" interface))
-          (when implementation
-            (let ((module (module implementation)))
-              (let* ((interface (interface interface))
-                     (current (implementation interface)))
-                (cond
-                  ((not current))
-                  ((eql current module))
-                  (T (restart-case
-                         (error 'interface-already-implemented :interface interface :current current :new module)
-                       (delete ()
-                         :report "Delete the current implementation and set the new one."
-                         (delete-module current))
-                       (override ()
-                         :report "Override the implementation while leaving the old module intact."))))
-                module))))))
+    (if (setf (symbol-value (find-symbol "*IMPLEMENTATION*" interface))
+              (when implementation
+                (let ((module (module implementation)))
+                  (let* ((interface (interface interface))
+                         (current (implementation interface)))
+                    (cond
+                      ((not current))
+                      ((eql current module))
+                      (T (restart-case
+                             (error 'interface-already-implemented :interface interface :current current :new module)
+                           (delete ()
+                             :report "Delete the current implementation and set the new one."
+                             (delete-module current))
+                           (override ()
+                             :report "Override the implementation while leaving the old module intact."
+                             (setf (module-storage current :implements)
+                                   (delete interface (module-storage current :implements)))
+                             (reset-interface interface)))))
+                    module))))
+        (test-interface interface)
+        (reset-interface interface))))
 
 (defun reset-interface (interface)
   (let ((interface (interface interface)))
     (warn "Resetting interface ~s" interface)
-    (funcall (module-storage interface 'interface-reset))))
+    (let ((*redefine* T))
+      (with-muffled-warnings
+        (funcall (module-storage interface 'interface-reset))))))
+
+(defun test-interface (interface)
+  (let ((interface (interface interface)))
+    (test-components interface (module-storage interface 'interface-definition))))
+
+(defmacro expand-interface (interface)
+  (setf interface (module interface))
+  (let ((implementation-var (find-symbol "*IMPLEMENTATION*" interface))
+        (implementation (find-symbol "IMPLEMENTATION" interface))
+        (value (gensym "VALUE")))
+    `(progn
+       (defvar ,implementation-var NIL)
+       (defun* ,implementation () ,implementation-var)
+       (defun* (setf ,implementation) (,value)
+         (setf (implementation ,interface) ,value)))))
 
 (defmacro define-interface (name &body components)
   (let ((fqid (format NIL "MODULARIZE.INT.~a" name))
@@ -70,35 +92,15 @@
          (:export #:*IMPLEMENTATION* #:IMPLEMENTATION)
          (:export ,@(loop for (type name &rest rest) in components
                           collect (make-symbol (string name)))))
+       (expand-interface ,(string name))
        (let ((,interface (find-package ,(string name))))
+         (setf (module-storage ,interface 'interface-definition)
+               ',components)
          (funcall
           (setf (module-storage ,interface 'interface-reset)
                 #'(lambda ()
-                    (expand-interface ,(string name)
-                      ,@components))))
+                    (expand-components ,(string name) ,@components))))
          ,interface))))
 
 (defmacro define-interface-extension (name &body components)
   )
-
-(defmacro defimpl (name &rest args)
-  (unless (eql (implementation (symbol-package name)) *package*)
-    (error "~s is not implementation of ~s." *package* (symbol-package name)))
-  (cond
-    ((macro-function name)
-     `(defmacro ,name ,@args))
-    ((fboundp name)
-     (etypecase (symbol-function name)
-       (generic-function
-        `(defmethod ,name ,@args))
-       (function
-        `(defun ,name ,@args))))))
-
-(defmacro define-interface-function (name args &body body)
-  `(defimpl ,name ,args ,@body))
-
-(defmacro define-interface-macro (name args &body body)
-  `(defimpl ,name ,args ,@body))
-
-(defmacro define-interface-method (name &rest args)
-  `(defimpl ,name ,@args))

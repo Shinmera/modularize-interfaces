@@ -22,11 +22,13 @@
    #:implementation
    #:reset-interface
    #:define-interface
-   #:define-interface-extension
+   #:define-interface-extension)
+  ;; standard-components.lisp
+  (:export
    #:defimpl
-   #:define-interface-function
-   #:define-interface-macro
-   #:define-interface-method)
+   #:i-defun
+   #:i-defmacro
+   #:i-defmethod)
   ;; toolkit.lisp
   (:export
    #:defun*
