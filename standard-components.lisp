@@ -9,7 +9,7 @@
 (define-component-expander (function f defun) (interface name lambda-list &optional documentation)
   (let ((name (intern-function-name interface name)))
     `(defun* ,name ,lambda-list
-       ,@(list documentation)
+       ,@(when documentation (list documentation))
        (declare (ignore ,@(extract-lambda-vars lambda-list)))
        (error ,(format NIL "~s is not implemented!" name)))))
 
@@ -20,7 +20,7 @@
 (define-component-expander (macro m defmacro) (interface name lambda-list &optional documentation)
   (let ((name (intern (string name) interface)))
     `(defmacro* ,name ,lambda-list
-       ,@(list documentation)
+       ,@(when documentation (list documentation))
        (declare (ignore ,@(extract-lambda-vars lambda-list)))
        (error ,(format NIL "~s is not implemented!" name)))))
 
@@ -42,7 +42,7 @@
 (define-component-expander (method gm defmethod) (interface name lambda-list &optional documentation)
   (let ((name (intern-function-name interface name)))
     `(defmethod* ,name ,lambda-list
-       ,@(list documentation)
+       ,@(when documentation (list documentation))
        (declare (ignore ,@(extract-lambda-vars lambda-list)))
        (error ,(format NIL "~s is not implemented!" name)))))
 
