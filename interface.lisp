@@ -84,23 +84,25 @@
          (setf (implementation ,interface) ,value)))))
 
 (defmacro define-interface (name &body components)
-  (let ((fqid (format NIL "MODULARIZE.INT.~a" name))
-        (interface (gensym "INTERFACE")))
-    `(eval-when (:compile-toplevel :load-toplevel :execute)
-       (define-module ,name
-         (:nicknames ,(make-symbol fqid))
-         (:export #:*IMPLEMENTATION* #:IMPLEMENTATION)
-         (:export ,@(loop for (type name &rest rest) in components
-                          collect (make-symbol (string name)))))
-       (expand-interface ,(string name))
-       (let ((,interface (find-package ,(string name))))
-         (setf (module-storage ,interface 'interface-definition)
-               ',components)
-         (funcall
-          (setf (module-storage ,interface 'interface-reset)
-                #'(lambda ()
-                    (expand-components ,(string name) ,@components))))
-         ,interface))))
+  (destructuring-bind (name &rest nicks) (if (listp name) name (list name))
+    (let ((fqid (format NIL "MODULARIZE.INT.~a" name))
+          (interface (gensym "INTERFACE")))
+      `(eval-when (:compile-toplevel :load-toplevel :execute)
+         (define-module ,name
+           (:nicknames ,(make-symbol fqid) ,@(mapcar #'(lambda (s) (make-symbol (string s))) nicks))
+           (:export #:*IMPLEMENTATION* #:IMPLEMENTATION)
+           (:export ,@(loop for (type name &rest rest) in components
+                            unless (listp name)
+                              collect (make-symbol (string name)))))
+         (expand-interface ,(string name))
+         (let ((,interface (find-package ,(string name))))
+           (setf (module-storage ,interface 'interface-definition)
+                 ',components)
+           (funcall
+            (setf (module-storage ,interface 'interface-reset)
+                  #'(lambda ()
+                      (expand-components ,(string name) ,@components))))
+           ,interface)))))
 
 (defmacro define-interface-extension (name &body components)
   )
