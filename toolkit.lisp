@@ -37,7 +37,7 @@
 (defun intern-function-name (package name)
   (if (listp name)
       (if (eql (car name) 'setf)
-          (list 'setf (intern-function-name package (cdr name)))
+          (list 'setf (intern-function-name package (second name)))
           (error "Invalid name supplied."))
       (or (find-symbol (string name) package)
           (intern (string name) package))))
