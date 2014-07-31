@@ -8,16 +8,20 @@
 
 (define-condition interface-not-found (error)
   ((%requested :initarg :requested :initform (error "REQUESTED required.") :reader requested))
-  (:report (lambda (c s) (format s "Interface ~s requested but not found." (requested c)))))
+  (:report (lambda (c s) (format s "Interface ~s requested but not found." (requested c))))
+  (:documentation "Condition signalled if an interface was requested but could not be found."))
 
 (define-condition interface-already-implemented (error)
   ((%requested :initarg :interface :initform (error "INTERFACE required.") :reader requested)
    (%current :initarg :current :initform (error "CURRENT required.") :reader current)
    (%new :initarg :new :initform (error "NEW required.") :reader new))
   (:report (lambda (c s) (format s "Interface ~s is already implemented by ~s. Attempting to set ~s."
-                                 (requested c) (current c) (new c)))))
+                                 (requested c) (current c) (new c))))
+  (:documentation "Condition signalled if an interface is already implemented by a different module than was attempted to register as an implementation."))
 
 (defun interface (object)
+  "Returns the interface package module as identified by the object.
+See MODULE for more."
   (or (handler-case
           (let ((module (module object)))
             (when (interface-p module)
@@ -27,6 +31,7 @@
       (error 'interface-not-found :requested object)))
 
 (defun interface-p (object)
+  "Returns T if the passed object is or names an interface, otherwise NIL."
   (handler-case
       (let ((module (module object)))
         (not (null (find-symbol "*IMPLEMENTATION*" module))))
@@ -34,10 +39,22 @@
       (declare (ignore err)))))
 
 (defun implementation (interface)
+  "Returns the currently active implementation of the interface."
   (let ((interface (interface interface)))
     (symbol-value (find-symbol "*IMPLEMENTATION*" interface))))
 
 (defun (setf implementation) (implementation interface)
+  "Attempts to set the implementation of an interface.
+Interfaces can only be implemented by modules and if a different
+module already implements the interface a condition is signalled.
+The following restarts are available:
+ DELETE    Deletes the old implementation through DELETE-MODULE.
+ OVERRIDE  Overrides the implementation and leaves the old module.
+ ABORT     Aborts the setting of the implementation completely.
+
+If the implementation setting was successful, TEST-INTERFACE is
+called. If the implementation is set to NIL, RESET-INTERFACE is
+called. "
   (with-simple-restart (abort "Abort the implementation set.")
     (if (setf (symbol-value (find-symbol "*IMPLEMENTATION*" interface))
               (when implementation
@@ -62,6 +79,7 @@
         (reset-interface interface))))
 
 (defun reset-interface (interface)
+  "Resets the interface by redefining it with stubs as per its component definitions."
   (let ((interface (interface interface)))
     (warn "Resetting interface ~s" interface)
     (let ((*redefine* T))
@@ -69,10 +87,12 @@
         (funcall (module-storage interface 'interface-reset))))))
 
 (defun test-interface (interface)
+  "Tests the interface for definition conformity. See TEST-COMPONENTS."
   (let ((interface (interface interface)))
     (test-components interface (module-storage interface 'interface-definition))))
 
 (defmacro expand-interface (interface)
+  "Expands the given interface into its basic form."
   (setf interface (module interface))
   (let ((implementation-var (find-symbol "*IMPLEMENTATION*" interface))
         (implementation (find-symbol "IMPLEMENTATION" interface))
@@ -84,6 +104,12 @@
          (setf (implementation ,interface) ,value)))))
 
 (defmacro define-interface (name &body components)
+  "Defines a new interface.
+
+This defines a new module with the given name and nicks, as well
+as a fully qualified interface identifier which is the name prefixed
+by MODULARIZE.INT. . It then calls EXPAND-INTERFACE on the new module
+and finally expands the component definitions as per EXPAND-COMPONENTS."
   (destructuring-bind (name &rest nicks) (if (listp name) name (list name))
     (let ((fqid (format NIL "MODULARIZE.INT.~a" name))
           (interface (gensym "INTERFACE")))
@@ -105,4 +131,5 @@
            ,interface)))))
 
 (defmacro define-interface-extension (name &body components)
-  )
+  "Currently not implemented."
+  (error "Not implemented."))

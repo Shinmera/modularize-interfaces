@@ -50,6 +50,7 @@
 
 
 (defmacro defimpl (name &rest args)
+  "Expands to I-DEFMACRO, I-DEFMETHOD or I-DEFUN depending on what kind of symbol it names."
   (cond
     ((macro-function name)
      `(i-defmacro ,name ,@args))
@@ -58,19 +59,23 @@
        (generic-function
         `(i-defmethod ,name ,@args))
        (function
-        `(i-defun ,name ,@args))))))
+        `(i-defun ,name ,@args))))
+    (T (error "The name fits neither macro, method or function?"))))
 
 (defmacro i-defun (name args &body body)
+  "Expands to an interface function definition."
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
   `(defun ,name ,args ,@body))
 
 (defmacro i-defmacro (name args &body body)
+  "Expands to an interface macro definition."
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
   `(defmacro ,name ,args ,@body))
 
 (defmacro i-defmethod (name &rest args)
+  "Expands to an interface method definition."
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
   `(defmethod ,name ,@args))
