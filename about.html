@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>MODULARIZE-INTERFACES</title>
+    <style type="text/css">
+      code a{text-decoration:none;}
+      h1{display:inline-block;font-size: 28pt;margin-bottom:0;}
+      code{font-family: Consolas, Inconsolata, monospace;}
+      h4{display: inline-block;margin:0;padding:0;}
+      ul{list-style: none;}
+      .package li{margin-bottom: 20px;}
+      .package pre{margin: 0 0 0 10px; white-space: pre-wrap;}
+      .package .nicknames{font-size: 12pt; font-weight: normal;}
+      table{margin: 20px;}
+      td{padding-bottom: 10px;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>modularize-interfaces</h1>
+      <span>0.9.0</span>
+      <p>Programmatical interfaces extension for Modularize</p>
+    </header>
+    <div id="content">
+      <article>
+        <documentate>
+          <span><h2>About Modularize-Interfaces</h2>
+
+<p>This is an extension to <a href="https://github.com/Shinmera/modularize">Modularize</a> that allows your application to define interfaces in-code that serve both as a primary documentation and as compliance control. Other modules can then implement interfaces to provide the actual functionality as outlined in the definition. A good example for a scenario in which this would be useful is databases. If other parts of the application can rely on a standardised interface it won't matter which database is really connected underneath and the type of database connection can be switched without having to change any of the other modules that rely on this functionality.</p>
+
+<h2>How To</h2>
+
+<p>Interfaces are defined through <code><a href="#MODULARIZE-INTERFACES:DEFINE-INTERFACE">DEFINE-INTERFACE</a></code>. These calls consist of a name (or a list of names) for the interface and a body of component definitions. You can define your own components, but more on that later. By default there are components for functions, macros, generic functions, methods and classes. A simple interface might look like so:</p>
+
+<pre><code>(<a href="#MODULARIZE-INTERFACES:DEFINE-INTERFACE">define-interface</a> radio
+  (<a href="http://l1sp.org/cl/DEFUN">defun</a> listen (frequency)
+    &quot;Listens on a given frequency for radio signals and outputs them.&quot;)
+  (<a href="http://l1sp.org/cl/DEFUN">defun</a> scan ()
+    &quot;Attempts to search the radio frequency range for recognisable signals.&quot;)
+  (<a href="http://l1sp.org/cl/DEFUN">defun</a> broadcast (station)
+    &quot;Starts up the given radio station to broadcast.&quot;)
+  (<a href="http://l1sp.org/cl/DEFMACRO">defmacro</a> define-station ((name frequency) &amp;body body)
+    &quot;Defines a new radio station on the given frequency.&quot;))</code></pre>
+
+<p>This will generate you an interface with the specified stub forms. Calling any of these functions before an implementation actually implements the interface will result in an error. In the back, <code><a href="#MODULARIZE-INTERFACES:DEFINE-INTERFACE">DEFINE-INTERFACE</a></code> creates a module through <code>DEFINE-MODULE</code> and then expands the specified components.</p>
+
+<p>If a module wants to implement an interface, it can define this in the <code>:IMPLEMENTS</code> module-option. It will then be automatically set up as the current implementation. Otherwise you can also directly do <code>(<a href="http://l1sp.org/cl/SETF">SETF</a> (<a href="#MODULARIZE-INTERFACES:IMPLEMENTATION">IMPLEMENTATION</a> :interface) :my-module)</code>. If an interface is already implemented by another module, a condition is raised with restarts to either abort, delete the old module or override it. After an implementation is set, <code><a href="#MODULARIZE-INTERFACES:TEST-INTERFACE">TEST-INTERFACE</a></code> is called to check for compliance. Compliance checks must be implemented by the respective components and may or may not be sufficient to test for true interface compliance. If an implementing module gets deleted, <code><a href="#MODULARIZE-INTERFACES:RESET-INTERFACE">RESET-INTERFACE</a></code> is called, which returns it to its old state with error-ing stub definitions.</p>
+
+<p>Defining the actual components of the interface in your module works just like writing any other function or whatever part it is in effect. You may want to use the provided <code>I-*</code> macros for the standard components though to make the intent more visible.</p>
+
+<p>Adding new components to use in interface definition happens through <code><a href="#MODULARIZE-INTERFACES:DEFINE-COMPONENT-EXPANDER">DEFINE-COMPONENT-EXPANDER</a></code>. This should evaluate to whatever stub forms you need, optimally resulting in an error if a user tries to access it without a conforming implementation in place. Additionally you will most likely want to add a <code><a href="#MODULARIZE-INTERFACES:DEFINE-COMPONENT-TESTER">DEFINE-COMPONENT-TESTER</a></code> for each of your components. This is a simple function definition that is called whenever <code><a href="#MODULARIZE-INTERFACES:TEST-INTERFACE">TEST-INTERFACE</a></code> is invoked and should return two values, a boolean whether the test failed or not and a string that explains the reason for failure or passing. <code><a href="#MODULARIZE-INTERFACES:TEST-INTERFACE">TEST-INTERFACE</a></code> will convert this into warnings. It is discouraged to signal errors as this would prevent other components from being tested too and may interfere while developing an implementation.</p>
+
+<p>For a super small sample use of an interface, have a look at <a href="https://github.com/Shinmera/modularize-interfaces/blob/master/interfaces-test-implementation.asd">interfaces-test-implementation.asd</a>, <a href="https://github.com/Shinmera/modularize-interfaces/blob/master/interfaces-test-implementation.lisp">interfaces-test-implementation.lisp</a> and <a href="https://github.com/Shinmera/modularize-interfaces/blob/master/interfaces-test-interface.lisp">interfaces-test-interface.lisp</a>.</p>
+</span>
+        </documentate>
+      </article>
+      <article>
+        <h2>Copyright</h2>
+        <span>modularize-interfaces</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license and ©<span>2014</span> <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>. This library can be obtained on <a href="https://github.com/Shinmera/modularize-interfaces">https://github.com/Shinmera/modularize-interfaces</a>.
+      </article>
+      <article>
+        <h2>Package Index</h2>
+        <ul><li class="package">
+            <h3>
+              <a name="MODULARIZE-INTERFACES" href="#MODULARIZE-INTERFACES">MODULARIZE-INTERFACES</a>
+              <span class="nicknames">(INTERFACES ORG.TYMOONNEXT.RADIANCE.LIB.MODULARIZE.INTERFACES)</span>
+            </h3>
+            <ul><li>
+                <a name="MODULARIZE-INTERFACES:INTERFACE-ALREADY-IMPLEMENTED"/>
+                <article>
+                  <header>
+                    <span>CLASS</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:INTERFACE-ALREADY-IMPLEMENTED">INTERFACE-ALREADY-IMPLEMENTED</a></h4>
+                      <span></span>
+                      <span></span>
+                    </code>
+                  </header>
+                  <pre>Condition signalled if an interface is already implemented by a different module than was attempted to register as an implementation.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:INTERFACE-NOT-FOUND"/>
+                <article>
+                  <header>
+                    <span>CLASS</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:INTERFACE-NOT-FOUND">INTERFACE-NOT-FOUND</a></h4>
+                      <span></span>
+                      <span></span>
+                    </code>
+                  </header>
+                  <pre>Condition signalled if an interface was requested but could not be found.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:COMPONENT-ALIAS"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:COMPONENT-ALIAS">COMPONENT-ALIAS</a></h4>
+                      <span></span>
+                      <span>(ALIAS)</span>
+                    </code>
+                  </header>
+                  <pre>Returns the actual component name the given alias points to or itself if it is not resolved..</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:IMPLEMENTATION"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:IMPLEMENTATION">IMPLEMENTATION</a></h4>
+                      <span></span>
+                      <span>(INTERFACE)</span>
+                    </code>
+                  </header>
+                  <pre>Returns the currently active implementation of the interface.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:INTERFACE"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:INTERFACE">INTERFACE</a></h4>
+                      <span></span>
+                      <span>(OBJECT)</span>
+                    </code>
+                  </header>
+                  <pre>Returns the interface package module as identified by the object.
+See MODULE for more.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:INTERFACE-P"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:INTERFACE-P">INTERFACE-P</a></h4>
+                      <span></span>
+                      <span>(OBJECT)</span>
+                    </code>
+                  </header>
+                  <pre>Returns T if the passed object is or names an interface, otherwise NIL.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:RESET-INTERFACE"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:RESET-INTERFACE">RESET-INTERFACE</a></h4>
+                      <span></span>
+                      <span>(INTERFACE)</span>
+                    </code>
+                  </header>
+                  <pre>Resets the interface by redefining it with stubs as per its component definitions.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:TEST-INTERFACE"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:TEST-INTERFACE">TEST-INTERFACE</a></h4>
+                      <span></span>
+                      <span>(INTERFACE)</span>
+                    </code>
+                  </header>
+                  <pre>Tests the interface for definition conformity. See TEST-COMPONENTS.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:EXPAND-COMPONENT"/>
+                <article>
+                  <header>
+                    <span>GENERIC</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:EXPAND-COMPONENT">EXPAND-COMPONENT</a></h4>
+                      <span></span>
+                      <span>(TYPE ARGS &amp;KEY INTERFACE &amp;ALLOW-OTHER-KEYS)</span>
+                    </code>
+                  </header>
+                  <pre>Generic function used to expand components into their proper forms.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFIMPL"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFIMPL">DEFIMPL</a></h4>
+                      <span></span>
+                      <span>(NAME &amp;REST ARGS)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to I-DEFMACRO, I-DEFMETHOD or I-DEFUN depending on what kind of symbol it names.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFINE-COMPONENT-EXPANDER"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFINE-COMPONENT-EXPANDER">DEFINE-COMPONENT-EXPANDER</a></h4>
+                      <span></span>
+                      <span>(NAME (INTERFACE &amp;REST ARGUMENTS) &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Defines a new component expander for interface definitions.
+
+The NAME can be a list of names that will be aliased to the first one.
+All names will be turned into keywords to allow for differing naming schemes
+in the component definitions. INTERFACE should be a symbol to which the
+interface package is bound. ARGUMENTS is the lambda-list used to deconstruct
+the arguments of the component definition.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFINE-COMPONENT-TESTER"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFINE-COMPONENT-TESTER">DEFINE-COMPONENT-TESTER</a></h4>
+                      <span></span>
+                      <span>(NAME (INTERFACE &amp;REST ARGUMENTS) &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Defines a new testing method for a component type.
+
+The structure of this macro is the same as for DEFINE-COMPONENT.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFINE-INTERFACE"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFINE-INTERFACE">DEFINE-INTERFACE</a></h4>
+                      <span></span>
+                      <span>(NAME &amp;BODY COMPONENTS)</span>
+                    </code>
+                  </header>
+                  <pre>Defines a new interface.
+
+This defines a new module with the given name and nicks, as well
+as a fully qualified interface identifier which is the name prefixed
+by MODULARIZE.INT. . It then calls EXPAND-INTERFACE on the new module
+and finally expands the component definitions as per EXPAND-COMPONENTS.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFINE-INTERFACE-EXTENSION"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFINE-INTERFACE-EXTENSION">DEFINE-INTERFACE-EXTENSION</a></h4>
+                      <span></span>
+                      <span>(NAME &amp;BODY COMPONENTS)</span>
+                    </code>
+                  </header>
+                  <pre>Currently not implemented.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFMACRO*"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFMACRO*">DEFMACRO*</a></h4>
+                      <span></span>
+                      <span>(NAME ARGS &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to a conditional macro definition that only happens if
+either *REDEFINE* is T or the macro has not yet been defined.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFMETHOD*"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFMETHOD*">DEFMETHOD*</a></h4>
+                      <span></span>
+                      <span>(NAME &amp;REST ARGS)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to a conditional method definition that only happens if
+either *REDEFINE* is T or the method has not yet been defined.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:DEFUN*"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:DEFUN*">DEFUN*</a></h4>
+                      <span></span>
+                      <span>(NAME ARGS &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to a conditional function definition that only happens if
+either *REDEFINE* is T or the function has not yet been defined.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:I-DEFMACRO"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:I-DEFMACRO">I-DEFMACRO</a></h4>
+                      <span></span>
+                      <span>(NAME ARGS &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to an interface macro definition.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:I-DEFMETHOD"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:I-DEFMETHOD">I-DEFMETHOD</a></h4>
+                      <span></span>
+                      <span>(NAME &amp;REST ARGS)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to an interface method definition.</pre>
+                </article>
+              </li><li>
+                <a name="MODULARIZE-INTERFACES:I-DEFUN"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#MODULARIZE-INTERFACES:I-DEFUN">I-DEFUN</a></h4>
+                      <span></span>
+                      <span>(NAME ARGS &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Expands to an interface function definition.</pre>
+                </article>
+              </li></ul></li></ul></article></div></body></html>
