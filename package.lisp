@@ -11,6 +11,7 @@
   (:export
    #:expand-component
    #:define-component-expander
+   #:define-component-tester
    #:component-alias)
   ;; interface.lisp
   (:export
@@ -20,6 +21,7 @@
    #:interface
    #:interface-p
    #:implementation
+   #:test-interface
    #:reset-interface
    #:define-interface
    #:define-interface-extension)
