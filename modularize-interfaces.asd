@@ -10,12 +10,12 @@
 
 (defsystem modularize-interfaces
   :name "Modularize-Interfaces"
-  :version "0.0.1"
+  :version "0.9.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Programmatical interfaces extension for Modularize"
-  :long-description ""
+  :homepage "https://github.com/Shinmera/modularize-interfaces"
   :serial T
   :components ((:file "package")
                (:file "toolkit")
