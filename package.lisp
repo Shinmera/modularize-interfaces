@@ -4,9 +4,9 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage org.tymoonnext.radiance.lib.modularize.interfaces
+(defpackage #:modularize-interfaces
   (:use #:cl #:modularize #:trivial-indent)
-  (:nicknames #:modularize-interfaces #:interfaces)
+  (:nicknames #:org.tymoonnext.radiance.lib.modularize.interfaces #:interfaces)
   ;; component.lisp
   (:export
    #:expand-component
