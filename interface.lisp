@@ -132,4 +132,5 @@ and finally expands the component definitions as per EXPAND-COMPONENTS."
 
 (defmacro define-interface-extension (name &body components)
   "Currently not implemented."
+  (declare (ignore name components))
   (error "Not implemented."))
