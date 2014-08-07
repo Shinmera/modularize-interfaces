@@ -66,13 +66,19 @@
   "Expands to an interface function definition."
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
-  `(defun ,name ,args ,@body))
+  `(defun ,name ,args
+     ,@(if (stringp (first body))
+           body
+           (cons (documentation name 'function) body))))
 
 (defmacro i-defmacro (name args &body body)
   "Expands to an interface macro definition."
   (unless (eql (implementation (symbol-package name)) *package*)
     (error "~s is not implementation of ~s." *package* (symbol-package name)))
-  `(defmacro ,name ,args ,@body))
+  `(defmacro ,name ,args
+     ,@(if (stringp (first body))
+           body
+           (cons (documentation name 'function) body))))
 
 (defmacro i-defmethod (name &rest args)
   "Expands to an interface method definition."
