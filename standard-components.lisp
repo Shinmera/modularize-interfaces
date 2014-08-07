@@ -46,6 +46,11 @@
        (declare (ignore ,@(extract-lambda-vars lambda-list)))
        (error ,(format NIL "~s is not implemented!" name)))))
 
+(define-component-expander (variable v defvar) (interface name &optional (value NIL v-p) documentation)
+  (let ((name (intern (string name) interface)))
+    (if v-p
+        `(defvar ,name ,value ,documentation)
+        `(defvar ,name))))
 
 
 
