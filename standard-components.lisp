@@ -15,7 +15,7 @@
 
 (define-component-tester (function f defun) (interface name lambda-list &optional documentation)
   (declare (ignore documentation))
-  (function-lambda-matches (symbol-function (intern-function-name interface name)) lambda-list))
+  (function-lambda-matches (fdefinition (intern-function-name interface name)) lambda-list))
 
 (define-component-expander (macro m defmacro) (interface name lambda-list &optional documentation)
   (let ((name (intern (string name) interface)))
@@ -26,7 +26,7 @@
 
 (define-component-tester (macro m defmacro) (interface name lambda-list &optional documentation)
   (declare (ignore documentation))
-  (function-lambda-matches (symbol-function (intern (string name) interface)) lambda-list))
+  (function-lambda-matches (fdefinition (intern (string name) interface)) lambda-list))
 
 (define-component-expander (class c defclass) (interface name direct-superclasses direct-slots &body options)
   (let ((name (intern (string name) interface)))
