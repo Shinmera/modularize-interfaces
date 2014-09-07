@@ -136,6 +136,8 @@ and finally expands the component definitions as per EXPAND-COMPONENTS."
   (error "Not implemented."))
 
 (defun generate-interface-stub (interface &optional (package *package*))
+  "Generates a stub for the INTERFACE that you can use as an implementation starting point.
+Symbols are interned into PACKAGE where appropriate."
   (let ((interface (interface interface)))
     (labels ((internalise (forms)
                (loop for form in forms
@@ -154,6 +156,7 @@ and finally expands the component definitions as per EXPAND-COMPONENTS."
             collect (definition-stub definition)))))
 
 (defun print-interface-stub (interface &optional (package *package*))
+  "Print the stub of GENERATE-INTERFACE-STUB in a way that is easily copy-pastable."
   (let ((*print-case* :downcase))
     (format T "~{~s~^~%~%~}" (generate-interface-stub interface package))
     (values)))
