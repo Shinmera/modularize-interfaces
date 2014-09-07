@@ -24,7 +24,10 @@
    #:test-interface
    #:reset-interface
    #:define-interface
-   #:define-interface-extension)
+   #:define-interface-extension
+
+   #:generate-interface-stub
+   #:print-interface-stub)
   ;; standard-components.lisp
   (:export
    #:defimpl

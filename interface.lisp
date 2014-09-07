@@ -134,3 +134,26 @@ and finally expands the component definitions as per EXPAND-COMPONENTS."
   "Currently not implemented."
   (declare (ignore name components))
   (error "Not implemented."))
+
+(defun generate-interface-stub (interface &optional (package *package*))
+  (let ((interface (interface interface)))
+    (labels ((internalise (forms)
+               (loop for form in forms
+                     collect (typecase form
+                               (list (internalise form))
+                               (symbol (intern (symbol-name form) package))
+                               (T form))))
+             (definition-stub (definition)
+               (destructuring-bind (func name &rest forms) definition
+                 `(,func ,(typecase name
+                            (symbol (find-symbol (symbol-name name) interface))
+                            (list (list (first name) (find-symbol (symbol-name (second name)) interface)))
+                            (T name))
+                         ,@(internalise forms)))))
+      (loop for definition in (module-storage interface 'interface-definition)
+            collect (definition-stub definition)))))
+
+(defun print-interface-stub (interface &optional (package *package*))
+  (let ((*print-case* :downcase))
+    (format T "~{~s~^~%~%~}" (generate-interface-stub interface package))
+    (values)))
