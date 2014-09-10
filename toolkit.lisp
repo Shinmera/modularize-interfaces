@@ -69,7 +69,20 @@ This has special handling for (SETF NAME)."
 
 (defun flatten-lambda-list (lambda-list)
   "Flattens the lambda-list by replacing all lists within it with their respective first symbol."
-  (mapcar #'(lambda (a) (if (listp a) (car a) a)) lambda-list))
+  (loop with in-opt = NIL
+        with results = ()
+        for element in lambda-list
+        do (cond ((eql element '&optional)
+                  (push (setf in-opt '&optional)
+                        results))
+                 (in-opt
+                  (push (if (listp element) (car element) element)
+                        results))
+                 ((listp element)
+                  (dolist (a element)
+                    (push a results)))
+                 (T (push element results)))
+        finally (return (nreverse results))))
 
 (defun extract-lambda-vars (lambda-list)
   "Extracts the symbols that name the variables in the lambda-list."
