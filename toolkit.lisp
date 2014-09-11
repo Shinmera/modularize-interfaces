@@ -72,8 +72,8 @@ This has special handling for (SETF NAME)."
   (loop with in-opt = NIL
         with results = ()
         for element in lambda-list
-        do (cond ((or (eql element '&optional) (eql element '&key))
-                  (push (setf in-opt '&optional)
+        do (cond ((or (member element '(&key &aux &optional)))
+                  (push (setf in-opt element)
                         results))
                  (in-opt
                   (push (if (listp element) (car element) element)
