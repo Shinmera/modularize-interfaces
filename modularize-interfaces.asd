@@ -10,7 +10,7 @@
 
 (defsystem modularize-interfaces
   :name "Modularize-Interfaces"
-  :version "0.9.0"
+  :version "0.9.2"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
