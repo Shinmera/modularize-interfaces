@@ -72,7 +72,7 @@ This has special handling for (SETF NAME)."
   (loop with in-opt = NIL
         with results = ()
         for element in lambda-list
-        do (cond ((eql element '&optional)
+        do (cond ((or (eql element '&optional) (eql element '&key))
                   (push (setf in-opt '&optional)
                         results))
                  (in-opt
