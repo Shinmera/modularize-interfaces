@@ -79,8 +79,8 @@ This has special handling for (SETF NAME)."
                   (push (if (listp element) (car element) element)
                         results))
                  ((listp element)
-                  (dolist (a element)
-                    (push a results)))
+                  ;; Flatten inner lists recursively
+                  (setf results (nconc (nreverse (flatten-lambda-list element)) results)))
                  (T (push element results)))
         finally (return (nreverse results))))
 
