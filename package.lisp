@@ -5,7 +5,7 @@
 |#
 
 (defpackage #:modularize-interfaces
-  (:use #:cl #:modularize #:trivial-indent)
+  (:use #:cl #:modularize #:trivial-indent #:trivial-arguments #:lambda-fiddle)
   (:nicknames #:org.tymoonnext.radiance.lib.modularize.interfaces #:interfaces)
   ;; component.lisp
   (:export

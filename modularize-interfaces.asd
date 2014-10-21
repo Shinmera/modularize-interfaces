@@ -25,4 +25,6 @@
                (:file "module")
                (:file "indent"))
   :depends-on (:modularize
-               :trivial-indent))
+               :trivial-indent
+               :trivial-arguments
+               :lambda-fiddle))

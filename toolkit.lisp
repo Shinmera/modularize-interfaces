@@ -56,52 +56,10 @@ This has special handling for (SETF NAME)."
       (or (find-symbol (string name) package)
           (intern (string name) package))))
 
-(defun lambda-keyword-p (symbol)
-  "Returns the symbol if it is a lambda-keyword symbol (the &-options)."
-  (find symbol '(&allow-other-keys &aux &body &environment &key &optional &rest &whole)))
-
-(defun remove-aux-part (lambda-list)
-  "Removes the &aux part of the lambda-list."
-  (let ((position (position '&aux lambda-list)))
-    (if position
-        (subseq lambda-list 0 position)
-        lambda-list)))
-
-(defun flatten-lambda-list (lambda-list)
-  "Flattens the lambda-list by replacing all lists within it with their respective first symbol."
-  (loop with in-opt = NIL
-        with results = ()
-        for element in lambda-list
-        do (cond ((or (member element '(&key &aux &optional)))
-                  (push (setf in-opt element)
-                        results))
-                 (in-opt
-                  (push (if (listp element) (car element) element)
-                        results))
-                 ((listp element)
-                  ;; Flatten inner lists recursively
-                  (setf results (nconc (nreverse (flatten-lambda-list element)) results)))
-                 (T (push element results)))
-        finally (return (nreverse results))))
-
-(defun extract-lambda-vars (lambda-list)
-  "Extracts the symbols that name the variables in the lambda-list."
-  (remove-if #'lambda-keyword-p (flatten-lambda-list (remove-aux-part lambda-list))))
-
-(defun function-arguments (function)
-  "Returns the lambda-list of the function if possible.
-This is only implemented with: SBCL, SWANK, working FUNCTION-LAMBDA-EXPRESSION."
-  (assert (or (symbolp function)
-              (listp function))
-          () "Function must be the symbol or list naming the function.")
-  #+sbcl (sb-introspect:function-lambda-list (fdefinition function))
-  #+(and swank (not sbcl)) (swank-backend:arglist function)
-  #-(or sbcl swank) (second (nth-value 2 (function-lambda-expression (fdefinition function)))))
-
 (defun function-lambda-matches (function lambda-list)
   "Returns T if the function matches the lambda-list in arguments.
 As a secondary value it returns a reason as to why it may have failed the test."
-  (let ((lambda-cur (remove-aux-part (function-arguments function)))
+  (let ((lambda-cur (remove-aux-part (arglist function)))
         (lambda-act (remove-aux-part lambda-list)))
     (cond
       ((/= (length lambda-cur) (length lambda-act))
