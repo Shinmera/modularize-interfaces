@@ -28,6 +28,9 @@
 
    #:generate-interface-stub
    #:print-interface-stub)
+  ;; module.lisp
+  (:export
+   #:implements)
   ;; standard-components.lisp
   (:export
    #:defimpl

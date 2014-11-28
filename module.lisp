@@ -30,3 +30,7 @@ implementation of an interface if a module that implements on is deleted."
   (let ((module (module (virtual-module-name module))))
     (loop for interface in (module-storage module :implements)
           do (test-interface interface))))
+
+(defun implements (module)
+  "Returns a list of interfaces this module implements."
+  (module-storage module :implements))
