@@ -4,13 +4,10 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage org.tymoonnext.radiance.lib.modularize.interfaces.asdf
-  (:use #:cl #:asdf))
-(in-package :org.tymoonnext.radiance.lib.modularize.interfaces.asdf)
-
-(defsystem modularize-interfaces
+(in-package #:cl-user)
+(asdf:defsystem modularize-interfaces
   :name "Modularize-Interfaces"
-  :version "0.9.2"
+  :version "0.9.3"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"

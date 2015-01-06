@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.interfaces)
+(in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (define-component-expander (function f defun) (interface name lambda-list &optional documentation)
   (let ((name (intern-function-name interface name)))

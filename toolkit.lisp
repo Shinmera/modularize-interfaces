@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.interfaces)
+(in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (defvar *redefine* NIL
   "Special variable that dictates whether already defined functions

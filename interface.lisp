@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.interfaces)
+(in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (define-condition interface-not-found (error)
   ((%requested :initarg :requested :initform (error "REQUESTED required.") :reader requested))

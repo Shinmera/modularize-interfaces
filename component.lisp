@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.interfaces)
+(in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (defvar *component-alias* (make-hash-table :test 'eql)
   "Table of aliases for component names.")

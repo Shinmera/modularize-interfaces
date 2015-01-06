@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.user)
+(in-package #:org.shirakumo.radiance.lib.modularize.user)
 
 (interfaces:define-interface interfaces-test-interface
   (defun greet (&optional name)

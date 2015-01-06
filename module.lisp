@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.tymoonnext.radiance.lib.modularize.interfaces)
+(in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (define-option-expander implements (package &rest interfaces)
   "Module option that allows modules to declare that they implement an itnerface.

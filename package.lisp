@@ -4,9 +4,10 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
+(in-package #:cl-user)
 (defpackage #:modularize-interfaces
   (:use #:cl #:modularize #:trivial-indent #:trivial-arguments #:lambda-fiddle)
-  (:nicknames #:org.tymoonnext.radiance.lib.modularize.interfaces #:interfaces)
+  (:nicknames #:org.shirakumo.radiance.lib.modularize.interfaces #:interfaces)
   ;; component.lisp
   (:export
    #:expand-component
