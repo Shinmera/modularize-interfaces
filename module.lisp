@@ -10,10 +10,10 @@
   "Module option that allows modules to declare that they implement an itnerface.
 This registers the module as the interface's implementation and puts the interface
 onto its :IMPLEMENTS storage slot."
-  `(progn ,@(loop for identifier in interfaces
-                  for interface = (interface identifier)
-                  collect `(progn (setf (implementation ,interface) ,package)
-                                  (pushnew ,interface (module-storage ,package :implements))))))
+  (loop for identifier in interfaces
+        for interface = (interface identifier)
+        do (setf (implementation interface) package)
+           (pushnew interface (module-storage package :implements))))
 
 (define-delete-hook (module)
   "This both checks that when an interface is deleted it is removed from the
