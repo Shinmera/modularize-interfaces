@@ -33,6 +33,7 @@ the arguments of the component definition."
          (args (gensym "ARGS")))
     `(progn
        (defmethod expand-component ((,(gensym "TYPE") (eql ,(make-keyword name))) ,args &key ,interface)
+         (declare (ignorable ,interface))
          (destructuring-bind ,arguments ,args
            ,@body))
        ,@(loop for alias in (rest names)
