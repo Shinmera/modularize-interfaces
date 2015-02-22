@@ -52,7 +52,15 @@
         `(defvar ,name ,value ,documentation)
         `(defvar ,name))))
 
-
+(defun check-function-name (name)
+  (etypecase name
+    (list
+     (assert (eql (first name) 'setf)
+             () "~s is not a valid function name." name)
+     (check-function-name (second name)))
+    (symbol
+     (assert (eql (implementation (symbol-package name)) *package*)
+             () "~s is not an implementation of ~s." *package* (symbol-package name)))))
 
 (defmacro defimpl (name &rest args)
   "Expands to I-DEFMACRO, I-DEFMETHOD or I-DEFUN depending on what kind of symbol it names."
@@ -69,8 +77,7 @@
 
 (defmacro i-defun (name args &body body)
   "Expands to an interface function definition."
-  (unless (eql (implementation (symbol-package name)) *package*)
-    (error "~s is not implementation of ~s." *package* (symbol-package name)))
+  (check-function-name name)
   `(defun ,name ,args
      ,@(if (stringp (first body))
            body
@@ -78,8 +85,7 @@
 
 (defmacro i-defmacro (name args &body body)
   "Expands to an interface macro definition."
-  (unless (eql (implementation (symbol-package name)) *package*)
-    (error "~s is not implementation of ~s." *package* (symbol-package name)))
+  (check-function-name name)
   `(defmacro ,name ,args
      ,@(if (stringp (first body))
            body
@@ -87,6 +93,5 @@
 
 (defmacro i-defmethod (name &rest args)
   "Expands to an interface method definition."
-  (unless (eql (implementation (symbol-package name)) *package*)
-    (error "~s is not implementation of ~s." *package* (symbol-package name)))
+  (check-function-name name)
   `(defmethod ,name ,@args))
