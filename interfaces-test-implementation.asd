@@ -14,5 +14,10 @@
   :serial T
   :components ((:file "interfaces-test-interface")
                (:file "interfaces-test-implementation"))
-  :depends-on (:modularize-interfaces))
+  :depends-on (:modularize-interfaces)
+  :version "1.0.0"
+  :license "Artistic"
+  :author "Nicolas Hafner <shinmera@tymoon.eu>"
+  :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "Test module system for modularize-interfaces.")
 
