@@ -6,6 +6,11 @@
 
 (in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
+(define-component-expander (type deftype) (interface name lambda-list &rest body)
+  (let ((name (intern (string name) interface)))
+    `(deftype ,name ,lambda-list
+       ,@body)))
+
 (define-component-expander (function f defun) (interface name lambda-list &optional documentation)
   (let ((name (intern-function-name interface name)))
     `(defun* ,name ,lambda-list
@@ -27,6 +32,12 @@
 (define-component-tester (macro m defmacro) (interface name lambda-list &optional documentation)
   (declare (ignore documentation))
   (function-lambda-matches (intern (string name) interface) lambda-list))
+
+(define-component-expander (condition define-condition) (interface name direct-superclasses direct-slots &body options)
+  (let ((name (intern (string name) interface)))
+    `(define-condition ,name ,direct-superclasses
+       ,direct-slots
+       ,@options)))
 
 (define-component-expander (class c defclass) (interface name direct-superclasses direct-slots &body options)
   (let ((name (intern (string name) interface)))
