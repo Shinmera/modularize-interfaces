@@ -53,7 +53,8 @@ the arguments of the component definition."
   (setf interface (module interface))
   `(progn
      ,@(loop for (type . args) in component-defs
-             collect (expand-component (component-alias (make-keyword type)) args :interface interface))))
+             collect `(funcall (compile NIL '(lambda ()
+                                              ,(expand-component (component-alias (make-keyword type)) args :interface interface)))))))
 
 (defgeneric test-component (type args &key interface &allow-other-keys)
   (:documentation "Tests a component type for validity."))
