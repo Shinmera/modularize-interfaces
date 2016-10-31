@@ -33,22 +33,37 @@
   (declare (ignore documentation))
   (function-lambda-matches (intern (string name) interface) lambda-list))
 
+(defun emit-class-def (macro name super slots options)
+  (labels ((i (symb)
+             (intern (string symb) (symbol-package name)))
+           (int-opt (opts kw)
+             (when (getf opts kw)
+               (setf (getf opts kw) (i (getf opts kw))))))
+    `(,macro ,name ,(loop for class in super
+                          collect (or (find-symbol (string class) (symbol-package name))
+                                      class))
+             ,(loop for (slot . opts) in slots
+                    for fixed-ops = (let ((opts (copy-list opts)))
+                                      (int-opt opts :accessor)
+                                      (int-opt opts :reader)
+                                      (int-opt opts :writer))
+                    collect (list* (i slot) fixed-ops))
+             ,@options)))
+
 (define-component-expander (condition define-condition) (interface name direct-superclasses direct-slots &body options)
-  (let ((name (intern (string name) interface)))
-    `(define-condition ,name ,direct-superclasses
-       ,direct-slots
-       ,@options)))
+  (emit-class-def 'define-condition (intern (string name) interface)
+                  direct-superclasses direct-slots options))
 
 (define-component-expander (class c defclass) (interface name direct-superclasses direct-slots &body options)
-  (let ((name (intern (string name) interface)))
-    `(defclass ,name ,direct-superclasses
-       ,direct-slots
-       ,@options)))
+  (emit-class-def 'defclass (intern (string name) interface)
+                  direct-superclasses direct-slots options))
 
 (define-component-expander (generic gf defgeneric) (interface name lambda-list &body options)
   (let ((name (intern-function-name interface name)))
     `(defgeneric ,name ,lambda-list
        ,@options)))
+
+;; FIXME: Defmethods referring to interface classes in specialisation.
 
 (define-component-expander (method gm defmethod) (interface name lambda-list &optional documentation)
   (let ((name (intern-function-name interface name)))
