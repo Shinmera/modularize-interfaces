@@ -25,7 +25,7 @@ implementation of an interface if a module that implements on is deleted."
   (loop for interface in (module-storage module :implements)
         do (setf (implementation interface) NIL)))
 
-(defmethod asdf:perform :after ((op asdf:load-op) (module module) &key)
+(defmethod asdf:perform :after ((op asdf:load-op) (module module))
   "Causes a TEST-INTERFACE to be performed on all interfaces listed in the module storage's :IMPLEMENTS field."
   (let ((module (module (virtual-module-name module))))
     (loop for interface in (module-storage module :implements)
