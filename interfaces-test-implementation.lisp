@@ -4,7 +4,8 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(define-module interfaces-test-implementation
+(in-package #:modularize-user)
+(define-module #:interfaces-test-implementation
   (:use #:cl #:interfaces)
   (:export #:greet)
   (:implements #:interfaces-test-interface))

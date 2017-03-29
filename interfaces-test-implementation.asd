@@ -9,7 +9,7 @@
 (in-package :org.tymoonnext.radiance.lib.modularize.interfaces.test-implementation.asdf)
 
 (defsystem interfaces-test-implementation
-  :class "modularize:module"
+  :class "modularize:virtual-module"
   :defsystem-depends-on (:modularize)
   :serial T
   :components ((:file "interfaces-test-interface")
