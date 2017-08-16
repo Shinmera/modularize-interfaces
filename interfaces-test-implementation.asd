@@ -4,10 +4,6 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage org.tymoonnext.radiance.lib.modularize.interfaces.test-implementation.asdf
-  (:use #:cl #:asdf))
-(in-package :org.tymoonnext.radiance.lib.modularize.interfaces.test-implementation.asdf)
-
 (defsystem interfaces-test-implementation
   :class "modularize:virtual-module"
   :defsystem-depends-on (:modularize)

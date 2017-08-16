@@ -4,7 +4,6 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:cl-user)
 (asdf:defsystem modularize-interfaces
   :name "Modularize-Interfaces"
   :version "0.9.3"
