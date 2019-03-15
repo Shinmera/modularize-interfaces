@@ -58,7 +58,9 @@ the arguments of the component definition."
 
 (defgeneric test-component (type args &key interface &allow-other-keys)
   (:documentation "Tests a component type for validity."))
-(defmethod test-component (type args &key)
+
+(defmethod test-component (type args &key interface)
+  (declare (ignore interface))
   (values T "No test available; passing by default."))
 
 (defmacro define-component-tester (name (interface &rest arguments) &body body)
