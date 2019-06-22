@@ -7,7 +7,7 @@
 (asdf:defsystem modularize-interfaces
   :name "Modularize-Interfaces"
   :version "0.9.3"
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Programmatical interfaces extension for Modularize"
