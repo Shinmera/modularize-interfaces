@@ -46,7 +46,8 @@
                     for fixed-ops = (let ((opts (copy-list opts)))
                                       (int-opt opts :accessor)
                                       (int-opt opts :reader)
-                                      (int-opt opts :writer))
+                                      (int-opt opts :writer)
+                                      opts)
                     collect (list* (i slot) fixed-ops))
              ,@options)))
 
