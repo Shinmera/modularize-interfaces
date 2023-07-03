@@ -1,9 +1,3 @@
-#|
- This file is a part of Modularize-Interfaces
- (c) 2014 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (in-package #:org.shirakumo.radiance.lib.modularize.interfaces)
 
 (define-indentation define-interface (4 &rest (&whole 2 0 4 &body)))

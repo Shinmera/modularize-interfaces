@@ -1,9 +1,3 @@
-#|
- This file is a part of Modularize-Interfaces
- (c) 2014 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (in-package #:cl-user)
 (defpackage #:modularize-interfaces
   (:use #:cl #:modularize #:trivial-indent #:trivial-arguments #:lambda-fiddle)
