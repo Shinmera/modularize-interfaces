@@ -5,9 +5,9 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "Programmatical interfaces extension for Modularize"
-  :homepage "https://Shinmera.github.io/modularize-interfaces/"
-  :bug-tracker "https://github.com/Shinmera/modularize-interfaces/issues"
-  :source-control (:git "https://github.com/Shinmera/modularize-interfaces.git")
+  :homepage "https://shinmera.com/docs/modularize-interfaces/"
+  :bug-tracker "https://shinmera.com/project/modularize-interfaces/issues"
+  :source-control (:git "https://shinmera.com/project/modularize-interfaces.git")
   :serial T
   :components ((:file "package")
                (:file "toolkit")
